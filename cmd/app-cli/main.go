@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/dyptan-io/go-mono/internal/service/app"
+	"github.com/dyptan-io/go-mono/internal/service"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 
 	switch os.Args[1] {
 	case "version":
-		fmt.Println("app-cli", app.Version)
+		fmt.Println("app-cli", service.Version)
 	default:
 		fmt.Fprintf(os.Stderr, "unknown command: %s\n", os.Args[1])
 		usage(os.Stderr)

@@ -23,7 +23,7 @@ tasks:
       - bin/{{index .MATCH 0}}
     cmds:
       - mkdir -p {{.ROOT_DIR}}/bin
-      - go build -ldflags="'-s -w'" -trimpath -o {{.ROOT_DIR}}/bin/{{index .MATCH 0}} ./cmd/{{index .MATCH 0}}
+      - go build -ldflags='-s -w' -trimpath -o {{.ROOT_DIR}}/bin/{{index .MATCH 0}} ./cmd/{{index .MATCH 0}}
 
   'docker:*':
     desc: "Build Docker image for one app: `task docker:<name>`"

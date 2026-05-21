@@ -6,11 +6,13 @@ WORKDIR /repo
 
 COPY . .
 
-ARG TARGETOS TARGETARCH APP
+ARG TARGETOS TARGETARCH APP COMMIT=dev
 RUN --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=cache,target=/root/go/pkg/mod \
     CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH \
-    go -C cmd/${APP} build -ldflags="-s -w" -trimpath -o /out/app .
+    go -C cmd/${APP} build \
+      -ldflags="-s -w -X 'github.com/dyptan-io/go-mono/internal/service.Version=${COMMIT}'" \
+      -trimpath -o /out/app .
 
 FROM gcr.io/distroless/static
 COPY --from=builder /out/app /app

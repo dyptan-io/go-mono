@@ -12,7 +12,7 @@ func main() {
 	cfg := ReadConfig()
 	log := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	if err := app.Run(context.Background(), cfg, log); err != nil {
+	if err := app.Run(context.Background(), cfg.BindAddr, log); err != nil {
 		log.Error("fatal error occurred", "error", err)
 		os.Exit(1)
 	}
