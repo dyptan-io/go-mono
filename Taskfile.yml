@@ -1,0 +1,35 @@
+version: "3"
+
+vars:
+  bin: bin/app
+  cmd: ./cmd/app
+
+tasks:
+  build:
+    desc: Compile the binary
+    cmds:
+      - go build -ldflags="-s -w" -trimpath -o {{.bin}} {{.cmd}}
+    deps:
+      - generate
+
+  generate:
+    desc: Generate code
+    cmds:
+      - go generate ./...
+
+  run:
+    desc: Run the application
+    cmds:
+      - go run {{.cmd}}
+    deps:
+      - build
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test ./... -race
+
+  lint:
+    desc: Run golangci-lint
+    cmds:
+      - golangci-lint run

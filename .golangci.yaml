@@ -1,0 +1,131 @@
+version: "2"
+linters:
+  enable:
+    - contextcheck                   # Check whether the function uses a non-inherited context.
+    - depguard                       # Go linter that checks if package imports are in a list of acceptable packages. [fast]
+    - durationcheck                  # Check for two durations multiplied together.
+    - errname                        # Checks that sentinel errors are prefixed with the `Err` and error types are suffixed with the `Error`.
+    - errorlint                      # Find code that can cause problems with the error wrapping scheme introduced in Go 1.13. [auto-fix]
+    - exhaustive                     # Check exhaustiveness of enum switch statements.
+    - exhaustruct                    # Checks if all structure fields are initialized.
+    - fatcontext                     # Detects nested contexts in loops and function literals. [auto-fix]
+    - gocheckcompilerdirectives      # Checks that go compiler directive comments (//go:) are valid. [fast]
+    - gochecknoinits                 # Checks that no init functions are present in Go code. [fast]
+    - gocritic                       # Provides diagnostics that check for bugs, performance and style issues. [auto-fix]
+    - gosec                          # Inspects source code for security problems.
+    - iface                          # Detect the incorrect use of interfaces, helping developers avoid interface pollution. [auto-fix]
+    - intrange                       # Intrange is a linter to find places where for loops could make use of an integer range. [auto-fix]
+    - iotamixing                     # Checks if iotas are being used in const blocks with other non-iota declarations. [fast]
+    - ireturn                        # Accept Interfaces, Return Concrete Types.
+    - loggercheck                    # Checks key value pairs for common logger libraries (kitlog,klog,logr,slog,zap).
+    - modernize                      # A suite of analyzers that suggest simplifications to Go code, using modern language and library features.
+    - musttag                        # Enforce field tags in (un)marshaled structs.
+    - nakedret                       # Checks that functions with naked returns are not longer than a maximum size (can be zero). [fast, auto-fix]
+    - nilnesserr                     # Reports constructs that checks for err != nil, but returns a different nil value error.
+    - noctx                          # Detects function and method with missing usage of context.Context.
+    - perfsprint                     # Checks that fmt.Sprintf can be replaced with a faster alternative. [auto-fix]
+    - prealloc                       # Find slice declarations that could potentially be pre-allocated. [fast]
+    - predeclared                    # Find code that shadows one of Go's predeclared identifiers. [fast]
+    - promlinter                     # Check Prometheus metrics naming via promlint. [fast]
+    - recvcheck                      # Checks for receiver type consistency.
+    - revive                         # Fast, configurable, extensible, flexible, and beautiful linter for Go. Drop-in replacement of golint. [auto-fix]
+    - sloglint                       # Ensure consistent code style when using log/slog. [auto-fix]
+    - spancheck                      # Checks for mistakes with OpenTelemetry/Census spans.
+    - tagalign                       # Check that struct tags are well aligned. [fast, auto-fix]
+    - testifylint                    # Checks usage of github.com/stretchr/testify. [auto-fix]
+    - tparallel                      # Tparallel detects inappropriate usage of t.Parallel() method in your Go test codes.
+    - usestdlibvars                  # A linter that detect the possibility to use variables/constants from the Go standard library. [fast, auto-fix]
+    - usetesting                     # Reports uses of functions with replacement inside the testing package. [auto-fix]
+    - wastedassign                   # Finds wasted assignment statements.
+    - wsl_v5                         # Add or remove empty lines. [auto-fix]
+
+    ## These are enabled by default. But just to be explicit
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+  settings:
+    perfsprint:
+        strconcat: false
+    revive:
+      rules:
+        - name: var-naming
+          arguments:
+            - []
+            - []
+            - - skip-package-name-collision-with-go-std: true
+    gocritic:
+      enable-all: true
+      disabled-checks:
+        - whyNoLint
+        - importShadow
+        - unnamedResult
+      settings:
+        hugeParam:
+          sizeThreshold: 512
+        rangeValCopy:
+          sizeThreshold: 512
+          skipTestFuncs: true
+    gosec:
+      severity: high
+      confidence: high
+    ireturn:
+      allow: 
+       - anon 
+       - error
+       - empty
+       - stdlib
+       - generic
+    depguard:
+      rules:
+        prevent-using-external-errors-package:
+          deny:
+            - pkg: github.com/pkg/errors
+              desc: use standard library "errors" package instead of "github.com/pkg/errors"
+        prevent-using-testutils-outside-test-files:
+          list-mode: lax
+          files:
+            - '!$test'
+          deny:
+            - pkg: github.com/dyptan-io/mono-go/internal/testutil
+              desc: testutil package should only be used in test files
+    exhaustruct:
+      allow-empty-returns: true
+    prealloc:
+      range-loops: false
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - path: (.+)\.go$
+        text: composite
+      - path: '(.+)_test\.go'
+        linters:
+          - exhaustruct
+          - revive
+          - contextcheck
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+formatters:
+  enable:
+    - gofumpt
+    - golines
+  settings:
+    golines:
+      max-len: 140
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

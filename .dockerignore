@@ -1,0 +1,13 @@
+build/
+adr/
+.env
+compose.yaml
+compose.override.yaml
+
+# Exclude "build-time" ignore files.
+.dockerignore
+
+# Exclude git history and configuration.
+.gitignore
+**/.git
+.github/
