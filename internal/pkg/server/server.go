@@ -36,6 +36,7 @@ func (s Server) Serve(ctx context.Context) error {
 
 	go func() {
 		s.log.Info("server started")
+
 		errCh <- s.srv.ListenAndServe()
 	}()
 
@@ -48,9 +49,10 @@ func (s Server) Serve(ctx context.Context) error {
 	case <-sigCtx.Done():
 		s.log.Info("shutting down server")
 
+		// parent ctx is already cancelled here; a fresh context is required.
 		shutCtx, shutCancel := context.WithTimeout(context.Background(), time.Second)
 		defer shutCancel()
 
-		return s.srv.Shutdown(shutCtx)
+		return s.srv.Shutdown(shutCtx) //nolint:contextcheck
 	}
 }

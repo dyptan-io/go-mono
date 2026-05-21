@@ -4,7 +4,7 @@ You are a Go programming assistant following the conventions of this repository.
 
 ## Getting Started
 
-- Read README.md for project overview and setup.
+- Read README.md for project overview, layout, and setup.
 
 ## Code Style
 
@@ -13,7 +13,7 @@ You are a Go programming assistant following the conventions of this repository.
 - **Interfaces**: Define only when needed; avoid premature abstraction.
 - **Type Semantics**: Prefer value types; use pointers to signal mutation.
 - **Packages**: Domain-oriented structure; sub-packages for implementation (e.g., `search/searxng`).
-  Platform packages → `/internal/platform/`. Transport & config → `cmd/app/`.
+  Shared packages → `internal/pkg/`. Transport & config → `cmd/<app-name>`.
   Avoid deep nesting and unnecessary small packages.
 
 ## Testing
@@ -30,5 +30,7 @@ Use a `map[string]struct{}` table when cases share the same inputs/outputs shape
 - Import `github.com/stretchr/testify/{assert,require}`.
 
 See example at [cmd/app/example_test.go](cmd/app/example_test.go) for reference.
+
+## Before You Finish
 
 Run `task lint` and fix all warnings before considering the task done.

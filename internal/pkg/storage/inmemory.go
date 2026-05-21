@@ -31,7 +31,7 @@ type InMemory[T Record] struct {
 
 // NewInMemory returns an empty InMemory store for type T.
 func NewInMemory[T Record]() *InMemory[T] {
-	return &InMemory[T]{records: make(map[ID]T)}
+	return &InMemory[T]{mu: sync.RWMutex{}, records: make(map[ID]T)}
 }
 
 // Get returns the record with the given ID or ErrNotFound.
@@ -58,6 +58,7 @@ func (s *InMemory[T]) Find(match Matcher[T]) ([]T, error) {
 	defer s.mu.RUnlock()
 
 	var res []T
+
 	for _, v := range s.records {
 		if match(v) {
 			res = append(res, v)

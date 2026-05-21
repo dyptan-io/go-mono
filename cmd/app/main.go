@@ -3,25 +3,17 @@ package main
 import (
 	"context"
 	"log/slog"
-	"net/http"
 	"os"
 
-	"github.com/dyptan-io/mono-go/internal/platform/server"
+	"github.com/dyptan-io/go-mono/internal/service/app"
 )
 
 func main() {
-	config := readConfig()
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	cfg := app.ReadConfig()
+	log := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	router := http.NewServeMux()
-
-	srv := server.New(&http.Server{
-		Addr:    config.BindAddr,
-		Handler: router,
-	}, logger)
-
-	if err := srv.Serve(context.Background()); err != nil {
-		logger.Error("fatal error occurred", "error", err)
+	if err := app.Run(context.Background(), cfg, log); err != nil {
+		log.Error("fatal error occurred", "error", err)
 		os.Exit(1)
 	}
 }

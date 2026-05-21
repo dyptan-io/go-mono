@@ -88,10 +88,12 @@ linters:
           files:
             - '!$test'
           deny:
-            - pkg: github.com/dyptan-io/mono-go/internal/testutil
+            - pkg: github.com/dyptan-io/go-mono/internal/testutil
               desc: testutil package should only be used in test files
     exhaustruct:
       allow-empty-returns: true
+      exclude:
+        - net/http\.Server    # stdlib type with many optional fields
     prealloc:
       range-loops: false
   exclusions:

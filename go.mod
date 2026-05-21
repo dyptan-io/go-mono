@@ -1,4 +1,4 @@
-module github.com/dyptan-io/mono-go
+module github.com/dyptan-io/go-mono
 
 go 1.26.3
 

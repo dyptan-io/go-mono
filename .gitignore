@@ -22,7 +22,6 @@ profile.cov
 # vendor/
 
 # Go workspace file
-go.work
 go.work.sum
 
 # env file
@@ -32,3 +31,6 @@ go.work.sum
 # .idea/
 # .vscode/
 # .claude/
+
+# Taskfile cache
+.task/

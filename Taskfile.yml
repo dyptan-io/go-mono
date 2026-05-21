@@ -1,35 +1,72 @@
-version: "3"
+version: '3'
 
 vars:
-  bin: bin/app
-  cmd: ./cmd/app
+  APPS:
+    sh: ls cmd
 
 tasks:
+  default:
+    cmds:
+      - task --list
+
+  # ── per-app ──────────────────────────────────────────────────────────────
+
+  'build:*':
+    desc: "Build one app: `task build:<name>`"
+    label: 'build-{{index .MATCH 0}}'
+    sources:
+      - cmd/{{index .MATCH 0}}/**/*.go
+      - cmd/{{index .MATCH 0}}/go.*
+      - internal/service/{{index .MATCH 0}}/**/*.go
+      - internal/pkg/**/*.go
+    generates:
+      - bin/{{index .MATCH 0}}
+    cmds:
+      - mkdir -p {{.ROOT_DIR}}/bin
+      - go build -ldflags="'-s -w'" -trimpath -o {{.ROOT_DIR}}/bin/{{index .MATCH 0}} ./cmd/{{index .MATCH 0}}
+
+  'docker:*':
+    desc: "Build Docker image for one app: `task docker:<name>`"
+    cmds:
+      - docker build --build-arg APP={{index .MATCH 0}} -t {{index .MATCH 0}} .
+
+  'run:*':
+    desc: "Run one app: `task run:<name>`"
+    cmds:
+      - go run ./cmd/{{index .MATCH 0}}
+
+  'test:*':
+    desc: "Test one app: `task test:<name>`"
+    cmds:
+      - go test ./internal/service/{{index .MATCH 0}}/...  ./cmd/{{index .MATCH 0}} -race
+
+  # ── global ─────────────────────────────────────────────────────────────
+
   build:
-    desc: Compile the binary
+    desc: Build all apps
     cmds:
-      - go build -ldflags="-s -w" -trimpath -o {{.bin}} {{.cmd}}
-    deps:
-      - generate
-
-  generate:
-    desc: Generate code
-    cmds:
-      - go generate ./...
-
-  run:
-    desc: Run the application
-    cmds:
-      - go run {{.cmd}}
-    deps:
-      - build
+      - for: { var: APPS }
+        task: 'build:{{.ITEM}}'
 
   test:
-    desc: Run tests
+    desc: Test
     cmds:
       - go test ./... -race
 
   lint:
-    desc: Run golangci-lint
+    desc: Lint
     cmds:
-      - golangci-lint run
+      - golangci-lint run --config {{.ROOT_DIR}}/.golangci.yaml ./...
+
+  tidy:
+    desc: go mod tidy .
+    cmds:
+      - go mod tidy
+      - for: { var: APPS }
+        cmd: go -C cmd/{{.ITEM}} mod tidy
+      - go work sync
+
+  generate:
+    desc: go generate.
+    cmds:
+      - go generate ./...
