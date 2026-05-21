@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	cfg := app.ReadConfig()
+	cfg := ReadConfig()
 	log := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
 	if err := app.Run(context.Background(), cfg, log); err != nil {
