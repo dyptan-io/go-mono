@@ -3,7 +3,11 @@ name: Build and Publish
 on:
   push:
     branches: [main]
-    tags: ["v*"]
+    paths:
+      - '**.go'
+      - '**/go.mod'
+      - '**/go.sum'
+      - 'Dockerfile'
 
 env:
   REGISTRY: ghcr.io
@@ -24,6 +28,7 @@ jobs:
             echo "filters<<EOF"
             echo "shared:"
             echo "  - 'internal/pkg/**'"
+            echo "  - 'Dockerfile'"
             for app in $(ls cmd); do
               echo "${app}:"
               echo "  - 'cmd/${app}/**'"
